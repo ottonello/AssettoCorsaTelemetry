@@ -1,5 +1,7 @@
 package sample.corsa;
 
+import sample.StructWriter;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -29,8 +31,8 @@ public class TelemetryInterface {
 
         byte[] receiveData = new byte[1024];
 
-        ByteBuffer handShake = getHandshake();
-        clientSocket.send(new DatagramPacket(handShake.array(), handShake.capacity()));
+        byte[] handShake = getHandshake();
+        clientSocket.send(new DatagramPacket(handShake, handShake.length));
 
         DatagramPacket receivePacket = new DatagramPacket(receiveData, HandshakeResponse.SIZE);
         clientSocket.receive(receivePacket);
@@ -40,8 +42,8 @@ public class TelemetryInterface {
 
         status = Status.handshake;
 
-        ByteBuffer subscribe = getSubscribeUpdates();
-        clientSocket.send(new DatagramPacket(subscribe.array(), subscribe.capacity()));
+        byte[] subscribe = getSubscribeUpdates();
+        clientSocket.send(new DatagramPacket(subscribe, subscribe.length));
 
         System.out.println("Subscribed");
         status = Status.subscribed;
@@ -59,44 +61,43 @@ public class TelemetryInterface {
 
     }
 
-    private ByteBuffer getHandshake() {
-        ByteBuffer sendData = ByteBuffer.allocate(4 * 3);
-        sendData.putInt(1);// identifier
-        sendData.putInt(1);// version
-        sendData.putInt(OperationId.HANDSHAKE);// operation
-        return sendData;
+    private byte[] getHandshake() throws IOException {
+        StructWriter structWriter = new StructWriter(12);
+        structWriter.writeInt(1);
+        structWriter.writeInt(1);
+        structWriter.writeInt(OperationId.HANDSHAKE);
+        return structWriter.toByteArray();
     }
 
-    private ByteBuffer getSubscribeUpdates() {
-        ByteBuffer sendData = ByteBuffer.allocate(4 * 3);
-        sendData.putInt(1);// identifier
-        sendData.putInt(1);// version
-        sendData.putInt(OperationId.SUBSCRIBE_UPDATE);// operation
-        return sendData;
+    private byte[] getSubscribeUpdates() throws IOException {
+        StructWriter structWriter = new StructWriter(12);
+        structWriter.writeInt(1);
+        structWriter.writeInt(1);
+        structWriter.writeInt(OperationId.SUBSCRIBE_UPDATE);
+        return structWriter.toByteArray();
     }
 
-    private ByteBuffer getSubscribeSpot() {
-        ByteBuffer sendData = ByteBuffer.allocate(4 * 3);
-        sendData.putInt(1);// identifier
-        sendData.putInt(1);// version
-        sendData.putInt(OperationId.SUBSCRIBE_SPOT);// operation
-        return sendData;
+    private byte[] getSubscribeSpot() throws IOException {
+        StructWriter structWriter = new StructWriter(12);
+        structWriter.writeInt(1);
+        structWriter.writeInt(1);
+        structWriter.writeInt(OperationId.SUBSCRIBE_SPOT);
+        return structWriter.toByteArray();
     }
 
-    private ByteBuffer getDismiss() {
-        ByteBuffer sendData = ByteBuffer.allocate(4 * 3);
-        sendData.putInt(1);// identifier
-        sendData.putInt(1);// version
-        sendData.putInt(OperationId.DISMISS);// operation
-        return sendData;
-    }
+    private byte[] getDismiss() throws IOException {
+        StructWriter structWriter = new StructWriter(12);
+        structWriter.writeInt(1);
+        structWriter.writeInt(1);
+        structWriter.writeInt(OperationId.DISMISS);
+        return structWriter.toByteArray();    }
 
     public void stop() throws IOException {
         System.out.println("Dismissing");
 
-        ByteBuffer dismiss = getDismiss();
+        byte[] dismiss = getDismiss();
 
-        clientSocket.send(new DatagramPacket(dismiss.array(), dismiss.capacity(), IPAddress, CORSA_PORT));
+        clientSocket.send(new DatagramPacket(dismiss, dismiss.length, IPAddress, CORSA_PORT));
 
         clientSocket.close();
         status = Status.dismissed;
