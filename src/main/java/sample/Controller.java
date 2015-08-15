@@ -7,14 +7,17 @@ import sample.corsa.TelemetryInterface;
 import java.io.IOException;
 
 public class Controller {
-    TelemetryInterface telemetryInterface;
+    TelemetryService telemetryService;
+
+    public Controller() {
+        telemetryService = new TelemetryService();
+    }
 
     @FXML
     protected void handleSubmitButtonAction(ActionEvent event) {
         new Thread(new Runnable() {
             public void run() {
-                telemetryInterface = new TelemetryInterface();
-                telemetryInterface.connect();
+                telemetryService.start();
             }
         }).start();
     }
@@ -22,11 +25,7 @@ public class Controller {
     public void handleStopButtonAction(ActionEvent actionEvent) {
         new Thread(new Runnable() {
             public void run() {
-                try {
-                    telemetryInterface.stop();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                telemetryService.stop();
             }
         }).start();
     }

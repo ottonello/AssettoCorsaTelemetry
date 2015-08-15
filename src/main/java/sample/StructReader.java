@@ -40,6 +40,10 @@ public class StructReader {
         return is.readInt();
     }
 
+    public char readChar() throws IOException {
+        return is.readChar();
+    }
+
     public float readFloat() throws IOException {
         return is.readFloat();
     }

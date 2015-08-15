@@ -10,7 +10,7 @@ import java.util.Arrays;
  */
 public class RTCarInfo {
 
-    int identifier;// char in C, so int here
+    int identifier;
     int size;
 
     float speed_Kmh;
@@ -62,51 +62,53 @@ public class RTCarInfo {
 
     public RTCarInfo(byte[] received) throws IOException {
         StructReader structReader = new StructReader(received);
-        identifier=structReader.readInt();
+        identifier = structReader.readInt();
         size = structReader.readInt();
         speed_Kmh = structReader.readFloat();
         speed_Mph = structReader.readFloat();
         speed_Ms = structReader.readFloat();
         isAbsEnabled = structReader.readBool();
         isAbsInAction = structReader.readBool();
+        isTcInAction = structReader.readBool();
         isTcEnabled = structReader.readBool();
         isInPit = structReader.readBool();
         isEngineLimiterOn = structReader.readBool();
-        accG_vertical=structReader.readFloat();
-        accG_horizontal=structReader.readFloat();
-        accG_frontal=structReader.readFloat();
-        lapTime=structReader.readInt();
-        lastLap=structReader.readInt();
-        bestLap=structReader.readInt();
-        lapCount=structReader.readInt();
+
+        accG_vertical = structReader.readFloat();
+        accG_horizontal = structReader.readFloat();
+        accG_frontal = structReader.readFloat();
+
+        lapTime = structReader.readInt();
+        lastLap = structReader.readInt();
+        bestLap = structReader.readInt();
+        lapCount = structReader.readInt();
 
         gas = structReader.readFloat();
-        brake=structReader.readFloat();
-        clutch=structReader.readFloat();
-        engineRPM=structReader.readFloat();
-        steer=structReader.readFloat();
-        gear =structReader.readInt();
-        cgHeight=structReader.readFloat();
-
+        brake = structReader.readFloat();
+        clutch = structReader.readFloat();
+        engineRPM = structReader.readFloat();
+        steer = structReader.readFloat();
+        gear = structReader.readInt();
+        cgHeight = structReader.readFloat();
         wheelAngularSpeed = structReader.readFloats(4);
-        slipAngle=structReader.readFloats(4);
-        slipAngle_ContactPatch=structReader.readFloats(4);
-        slipRatio=structReader.readFloats(4);
-        tyreSlip=structReader.readFloats(4);
-        ndSlip=structReader.readFloats(4);
-        load=structReader.readFloats(4);
-        Dy=structReader.readFloats(4);
-        Mz=structReader.readFloats(4);
-        tyreDirtyLevel=structReader.readFloats(4);
+        slipAngle = structReader.readFloats(4);
+        slipAngle_ContactPatch = structReader.readFloats(4);
+        slipRatio = structReader.readFloats(4);
+        tyreSlip = structReader.readFloats(4);
+        ndSlip = structReader.readFloats(4);
+        load = structReader.readFloats(4);
+        Dy = structReader.readFloats(4);
+        Mz = structReader.readFloats(4);
+        tyreDirtyLevel = structReader.readFloats(4);
 
-        camberRAD=structReader.readFloats(4);
-        tyreRadius=structReader.readFloats(4);
-        tyreLoadedRadius=structReader.readFloats(4);
-        suspensionHeight=structReader.readFloats(4);
-        carPositionNormalized=structReader.readFloat();
-        carSlope=structReader.readFloat();
+        camberRAD = structReader.readFloats(4);
+        tyreRadius = structReader.readFloats(4);
+        tyreLoadedRadius = structReader.readFloats(4);
+        suspensionHeight = structReader.readFloats(4);
+        carPositionNormalized = structReader.readFloat();
+        carSlope = structReader.readFloat();
 
-        carCoordinates=structReader.readFloats(3);
+        carCoordinates = structReader.readFloats(3);
     }
 
     public int getIdentifier() {

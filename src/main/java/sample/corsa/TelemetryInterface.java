@@ -14,13 +14,19 @@ public class TelemetryInterface {
     public static final int CORSA_PORT = 9996;
     private Status status = Status.init;
     InetAddress IPAddress;
+    RTCarInfo telemetry;
 
     public void connect() {
-        try {
-            startHandshake();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    startHandshake();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+
     }
 
     private void startHandshake() throws IOException {
@@ -49,16 +55,20 @@ public class TelemetryInterface {
         status = Status.subscribed;
 
         while (!Status.dismissed.equals(status)) {
-            System.out.println("Receiving");
+//            System.out.println("Receiving");
 
             DatagramPacket receivedLapData = new DatagramPacket(receiveData, 328);
             clientSocket.receive(receivedLapData);
 
-            RTCarInfo telemetry = new RTCarInfo(receiveData);
-            System.out.println("RECEIVED: " + telemetry);
+            telemetry = new RTCarInfo(receiveData);
+//            System.out.println("RECEIVED: " + telemetry);
         }
         System.out.println("Bye");
 
+    }
+
+    public RTCarInfo getTelemetry() {
+        return telemetry;
     }
 
     private byte[] getHandshake() throws IOException {
@@ -90,14 +100,19 @@ public class TelemetryInterface {
         structWriter.writeInt(1);
         structWriter.writeInt(1);
         structWriter.writeInt(OperationId.DISMISS);
-        return structWriter.toByteArray();    }
+        return structWriter.toByteArray();
+    }
 
     public void stop() throws IOException {
         System.out.println("Dismissing");
 
         byte[] dismiss = getDismiss();
+        try {
+            clientSocket.send(new DatagramPacket(dismiss, dismiss.length, IPAddress, CORSA_PORT));
 
-        clientSocket.send(new DatagramPacket(dismiss, dismiss.length, IPAddress, CORSA_PORT));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         clientSocket.close();
         status = Status.dismissed;
