@@ -21,6 +21,7 @@
         </dependency>
     </dependencies>
 
+    <!-- TODO include the dll somehow -->
     <build>
         <resources>
             <resource>
